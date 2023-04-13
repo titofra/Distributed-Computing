@@ -39,4 +39,4 @@ This very basic distributed computing program is unstable. I am still working on
 [] Memory leak
 [] Don't fix maximum legnth for the number of char of task & the lenght of client return data
 [] Use the same connection/socket between client and webserver (Connection keep-alive)
-[] 
+[] #1
