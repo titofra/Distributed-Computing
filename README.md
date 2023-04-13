@@ -3,39 +3,38 @@
 [Distributed computing](https://en.wikipedia.org/wiki/Distributed_computing) refers to a network of computers working together to solve a problem or complete a task. Instead of a single computer handling all the processing, the workload is divided among multiple machines, allowing for faster and more efficient processing.
 
 ## Scope
-Here is a basic implementation of a generic distributed computing: you can give any task to any kind of network. Indeed, clients and server can be almost anything, including computers, servers, etc ... even phones ??? There is no limits (I hope). Finally, network can be heterogeneous which means you can have differents kinds of system, maybe on running on various architectures, with various specificities.
+This is a basic implementation of a generic distributed computing system that can be used to distribute any task across a network of computers. The clients and servers can be any type of computer, including desktops, servers, and even phones. There are no limitations (I hope) to the types of systems that can be used, and the network can be heterogeneous, meaning that different systems with different architectures and specifications can be used together.
 
 ## Implementation
 ### Introduction
-Firstly, a computer named "sever" know all the tasks and his role is to spread it over the workers. The workers, also named clients, are computers that are waiting for a task. There unique role is to execute tasks.
+The server is responsible for managing the tasks and distributing them to the workers. The workers, also known as clients, are computers that are waiting for tasks to be assigned to them. There unique role is to execute tasks.
 
 ### Connections
-Server and clients are connected through bi-directional sockets. Moreover, a webserver is running on the server.
+Server and clients are connected through bidirectional sockets. Moreover, a web server is running on the server.
 
 ### How it works
-Once the server get a new task, it checks if there is a non-working clients. If there is, it send it the task's id through socket. The workers, which is continuously waiting for a task, now get one. However it may need some data to run the task. For that, it fetch the webpage associated to the task. Finally, it run the task, send the result to the server through the socket and waits for another task.
+When the server receives a new task, it checks to see if there are any available workers. If there is at least one, it sends the task ID to one worker through the socket. The worker receives the task and may need additional data to complete it. To obtain this data, it fetches the webpage associated with the task. Once it has all the necessary data, it runs the task, sends the results back to the server through the socket, and waits for another task.
 
-## Run
+## Running the system
 - Start the webserver with Node.js ```$node ./webserver.js```
 - Then execute the server ```$./server.o```
-- Now the server is ready to establish connections, you just need to setup some clients. For that, run the os-image on the clients' machine.
+- The server is now ready to establish connections, and clients can be set up by running the os-image on their machines.
 
 ### Build the clients' os-image
-To build the ISO file for the clients, go to /os and run ```make os-image``` and follow intructions. Note that you will have to download a Linux kernel and busybox.
+To build the ISO file for the clients, navigate to the /os and run ```make os-image```, following the instructions provided. Note that you will need to download a Linux kernel and busybox.
 
 ## Examples
-A template program can be found in /examples/template/ which provide a minimal implementation.
-Other examples are coming soon.
+A template program can be found in /examples/template/, which provides a minimal implementation. Other examples are forthcoming.
 
 ## Warnings
-This very basic distributed computing program is unstable. I am still working on. There is a lot of issues, it is not efficient, it is not user-friendly, etc ... but it should works. I am open to any advice/helps/contributes, so fill free to help the project !
+This very basic distributed computing program is unstable. I am still working on. There are a lot of issues: it is not efficient, it is not user-friendly, etc ... but it should works. I am open to any advice/helps/contributions, so fill free to help the project !
 
 ## TODO
-- [ ] To test. Do I really need to setup different local addr ip for each client? I guess yes
-- [ ] Delete client and don't crash on socket's client interruption
+- [ ] To test. Do I really need to set up different local IP addresses for each client? I guess yes
+- [ ] Implement a "delete client" function and don't crash on socket's client interruption
 - [ ] Change my dirty system of mutex
-- [ ] Stop workers if needed
-- [ ] Show stats on index file
+- [ ] Implement the ability to stop workers if necessary
+- [ ] Display statistics on the index file
 - [ ] Memory leak
-- [ ] Don't fix maximum legnth for the number of char of task & the lenght of client return data
-- [ ] Use the same connection/socket between client and webserver (Connection keep-alive)
+- [ ] Remove the maximum length limit for task character length and client return data
+- [ ] Use the same connection/socket between the client and webserver (Connection keep-alive)
