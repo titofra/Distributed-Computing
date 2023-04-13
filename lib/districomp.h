@@ -1,5 +1,5 @@
 /*
-    @brief Basic Distributed Computing's Implementation. Check out http://github.com/titofra/Distributed_Computing for more information
+    @brief Basic Distributed Computing's Implementation. Check out http://github.com/titofra/Distributed-Computing for more information
     @author Titouan ABADIE - http://github.com/titofra - 04/23
 */
 
