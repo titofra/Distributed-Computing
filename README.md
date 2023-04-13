@@ -31,12 +31,12 @@ Other examples are coming soon.
 This very basic distributed computing program is unstable. I am still working on. There is a lot of issues, it is not efficient, it is not user-friendly, etc ... but it should works. I am open to any advice/helps/contributes, so fill free to help the project !
 
 ## TODO
-[] To test. Do I really need to setup different local addr ip for each client? I guess yes
-[] Delete client and don't crash on socket's client interruption
-[] Change my dirty system of mutex
-[] Stop workers if needed
-[] Show stats on index file
-[] Memory leak
-[] Don't fix maximum legnth for the number of char of task & the lenght of client return data
-[] Use the same connection/socket between client and webserver (Connection keep-alive)
-[] #1
+- [ ] To test. Do I really need to setup different local addr ip for each client? I guess yes
+- [ ] Delete client and don't crash on socket's client interruption
+- [ ] Change my dirty system of mutex
+- [ ] Stop workers if needed
+- [ ] Show stats on index file
+- [ ] Memory leak
+- [ ] Don't fix maximum legnth for the number of char of task & the lenght of client return data
+- [ ] Use the same connection/socket between client and webserver (Connection keep-alive)
+- [ ] #1
