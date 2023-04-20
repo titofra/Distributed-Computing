@@ -20,9 +20,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-#include "mailbox.c"
-#include "mutex.c"
-#include "webserver.c"
+#include "../src/mailbox.c"
+#include "../src/mutex.c"
+#include "../src/webserver.c"
 
 typedef struct _task {
     uint16_t id;
