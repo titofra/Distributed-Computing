@@ -16,8 +16,7 @@ Server and clients are connected through bidirectional sockets. Moreover, a web 
 When the server receives a new task, it checks to see if there are any available workers. If there is at least one, it sends the task ID to one worker through the socket. The worker receives the task and may need additional data to complete it. To obtain this data, it fetches the webpage associated with the task. Once it has all the necessary data, it runs the task, sends the results back to the server through the socket, and waits for another task.
 
 ## Running the system
-- Start the webserver with Node.js ```$node ./webserver.js```
-- Then execute the server ```$./server.o```
+- Start your server (check the examples below for more information)
 - The server is now ready to establish connections, and clients can be set up by running the os-image on their machines.
 
 ### Build the clients' os-image

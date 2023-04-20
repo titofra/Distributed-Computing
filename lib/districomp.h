@@ -3,8 +3,8 @@
     @author Titouan ABADIE - http://github.com/titofra - 04/23
 */
 
-#ifndef districomp_H
-#define districomp_H
+#ifndef DISTRICOMP_H
+#define DISTRICOMP_H
 
 #define CLIENT_RETURN_DATA_LEN 512
 #define N_CHR_TSK_MAX 4 +1   // number of characters for task's id (i.e. 3 means that tasks goes from 0 to 999). +1 for the end character ('0')
@@ -23,11 +23,11 @@
 #include <errno.h>
 #include "mailbox.c"
 #include "mutex.c"
+#include "webserver.c"
 
 typedef struct _task {
     uint16_t id;
     char result [CLIENT_RETURN_DATA_LEN];
-    const char* data_in;
     bool isDone;
 } _task_t;
 
@@ -39,6 +39,7 @@ typedef struct _client {
 
 typedef struct districomp_srv {
     int mainSock;
+    int tmp_cli_sck;
     struct sockaddr_in addr;
     _client_t* clients;
     uint16_t nb_cli;
@@ -49,7 +50,8 @@ typedef struct districomp_srv {
     pthread_t listening_thrd;
     pthread_t receiving_thrd;
     mailbox_t waitingTasks;
-    const char* path_to_ws_tsk;
+    char* path_to_ws_tsk;
+    webserver_srv_t webSrv;
 } districomp_srv_t;
 
 typedef struct districomp_cli {
@@ -66,12 +68,14 @@ typedef struct districomp_cli {
     @brief Initialise the districomp's server
     @param districomp_srv_t* srv, Pointer to the districomp's server
     @param const uint16_t port, Port for the socket connection
+    @param const uint16_t ws_port, Port for the webserver connection
     @param const int domain, Communication domain (check https://www.man7.org/linux/man-pages/man2/socket.2.html for more information)
     @param const int type, Communication type (check https://www.man7.org/linux/man-pages/man2/socket.2.html for more information)
     @param const int protocol, Communication protocol (check https://www.man7.org/linux/man-pages/man2/socket.2.html for more information)
-    @param const char* path_to_ws_tsk, Path to the webserver's root folder
+    @param const char* path_to_ws_root, Path to the webserver's root folder
+    @param const uint16_t maxSockReqQeued, Maximum number of pending connections to webserver (check backlog param at https://www.man7.org/linux/man-pages/man2/listen.2.html for more information)
 */
-void InitServer (districomp_srv_t* srv, const uint16_t port, const int domain, const int type, const int protocol, const char* path_to_ws_tsk);
+void InitServer (districomp_srv_t* srv, const uint16_t port, const uint16_t ws_port, const int domain, const int type, const int protocol, const char* path_to_ws_root, const uint16_t maxSockReqQeued);
 
 /*
     @brief Start a new thread which listen for incoming connection to the server
@@ -216,4 +220,4 @@ void SendResult (districomp_cli_t* cli, const char* data);
 */
 void CloseClient (districomp_cli_t* cli);
 
-#endif  // districomp_H
+#endif  // DISTRICOMP_H

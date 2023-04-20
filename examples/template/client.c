@@ -16,7 +16,7 @@ int main (void) {
         ReceiveTask (&cli, &data);
 
         // Process with data
-        const char* result = ...;
+        const char* result = "oiuio xosq ixsq";
 
         // Send the result
         SendResult (&cli, result);

@@ -1,12 +1,13 @@
 #include "../../lib/districomp.c"
 
 #define PORT 8080
+#define WS_PORT 1818
 
 int main (void) {
     districomp_srv_t srv;
 
     // Initialise tcp socket server
-    InitServer (&srv, PORT, AF_INET, SOCK_STREAM, 0, "../../webserver/webserver_content/tasks/");
+    InitServer (&srv, PORT, WS_PORT, AF_INET, SOCK_STREAM, 0, "./webserver_root/", 3);
 
     // Start listening for incoming connection
     StartListening (&srv, 128);
@@ -28,7 +29,8 @@ int main (void) {
     char* res_task0 = GetResult (&srv, tsk0_id);
     char* res_task1 = GetResult (&srv, tsk1_id);
     char* res_task2 = GetResult (&srv, tsk2_id);
-    ...
+    //...
+    printf ("1: %s\n2: %s\n3: %s\n", res_task0, res_task1, res_task2);
 
     // Close everything
     CloseServer (&srv);

@@ -1,6 +1,6 @@
 #include "districomp.h"
 
-void InitServer (districomp_srv_t* srv, const uint16_t port, const int domain, const int type, const int protocol, const char* path_to_ws_tsk) {
+void InitServer (districomp_srv_t* srv, const uint16_t port, const uint16_t ws_port, const int domain, const int type, const int protocol, const char* path_to_ws_root, const uint16_t maxSockReqQeued) {
     // Create socket
     srv->mainSock = socket (domain, type, protocol);
     if (srv->mainSock < 0) {
@@ -33,7 +33,9 @@ void InitServer (districomp_srv_t* srv, const uint16_t port, const int domain, c
     }
 
     // Init
-    srv->path_to_ws_tsk = path_to_ws_tsk;
+    srv->path_to_ws_tsk = (char*) malloc (strlen (path_to_ws_root) + 6 +1);
+    strcpy (srv->path_to_ws_tsk, path_to_ws_root);
+    strcpy (srv->path_to_ws_tsk + strlen (path_to_ws_root), "tasks/\0");
     srv->nb_cli = 0;
     srv->nb_tsk = 0;
     srv->clients = (_client_t*) malloc (0);
@@ -41,6 +43,8 @@ void InitServer (districomp_srv_t* srv, const uint16_t port, const int domain, c
     InitMailBox (&srv->waitingTasks, 128, -1, false);   // TODO unlimited mailbox (not 128)
     InitMutex (&srv->clients_mut);
     InitMutex (&srv->tasks_mut);
+    InitWebServer (&srv->webSrv, ws_port, domain, type, protocol, path_to_ws_root);
+    StartWSListening (&srv->webSrv, maxSockReqQeued);
 
     // TODO: build path if non existing
 }
@@ -59,22 +63,25 @@ void StartListening (districomp_srv_t* srv, const uint16_t maxSockReqQeued) {
 void* _Listening (void* arg) {
     districomp_srv_t* srv = (districomp_srv_t*) arg;
 
-    int client_sock;
     int tsk_id;
     while (1) {
+
+        // Should we cancel the thread?
+        pthread_testcancel ();
+
         // Accept an incoming connection
         struct sockaddr_in client_addr;
         socklen_t client_size = sizeof(client_addr);
-        client_sock = accept(srv->mainSock, (struct sockaddr*)&client_addr, &client_size);
+        srv->tmp_cli_sck = accept(srv->mainSock, (struct sockaddr*)&client_addr, &client_size);
 
-        if (client_sock > 0){
+        if (srv->tmp_cli_sck > 0){
 
             AcquireMutex (&srv->clients_mut, true);
 
             // Add the client to clients
             srv->clients = (_client_t*) realloc (srv->clients, (srv->nb_cli + 1) * sizeof (_client_t));
             srv->clients [srv->nb_cli].addr = client_addr;
-            srv->clients [srv->nb_cli].sck = client_sock;
+            srv->clients [srv->nb_cli].sck = srv->tmp_cli_sck;
             srv->clients [srv->nb_cli].tsk_id = -1;
             srv->nb_cli += 1;
 
@@ -114,6 +121,7 @@ void* _Listening (void* arg) {
 }
 
 void StopListening (districomp_srv_t* srv) {
+    close (srv->tmp_cli_sck);   // close the temporary socket
     pthread_cancel (srv->listening_thrd);
 }
 
@@ -127,6 +135,9 @@ void* _Receiving (void* arg) {
     int tsk_id;
     uint16_t nb_cli;
     while (1) {
+
+        // Should we cancel the thread?
+        pthread_testcancel ();
 
         AcquireMutex (&srv->clients_mut, false);
         nb_cli = srv->nb_cli;
@@ -151,6 +162,8 @@ void* _Receiving (void* arg) {
                         MSG_DONTWAIT    // Don't wait until a msg is receive
                     ) >= 0
                 ){
+                    printf ("msg %s\n", srv->tasks [srv->clients [i].tsk_id].result);
+
                     ReleaseMutex (&srv->clients_mut, false);
 
                     srv->tasks [srv->clients [i].tsk_id].isDone = true;
@@ -274,7 +287,7 @@ void _AddDataWSFileTsk (districomp_srv_t* srv, uint16_t tsk_id) {
         // Write the data into the file
         fwrite (srv->tasks [tsk_id].data_in, sizeof (char), strlen (srv->tasks [tsk_id].data_in), pfile);
     } else {
-        perror ("\nCannot create/access file for task\n");
+        perror ("\nCannot create/access file for task. Make sure you provided a path to a valid folder containing at least a folder named 'tasks/'\n");
         exit (1);
     }
 
@@ -334,10 +347,6 @@ void ClearTasks (districomp_srv_t* srv) {
         // while there is task...
     }
 
-    // Clear files
-    rmdir (srv->path_to_ws_tsk);
-    mkdir (srv->path_to_ws_tsk, S_IRWXU);
-
     // TODO: stop workers
 }
 
@@ -375,21 +384,27 @@ uint16_t GetNbRemainingTasks (districomp_srv_t* srv) {
 }
 
 void CloseServer (districomp_srv_t* srv) {
-    DestroyMutex (&srv->clients_mut);
-    DestroyMutex (&srv->tasks_mut);
     StopListening (srv);
     StopReceiving (srv);
-    close (srv->mainSock);
+    StopWSListening (&srv->webSrv);
     ClearTasks (srv);
+    DestroyMutex (&srv->clients_mut);
+    DestroyMutex (&srv->tasks_mut);
+    for (int i = 0; i < srv->nb_cli; i++) {
+        close (srv->clients [i].sck);
+    }
+    close (srv->mainSock);
+    CloseWebServer (&srv->webSrv);
     free (srv->tasks);
     free (srv->clients);
     srv = NULL;
 }
 
 void WaitForThreadsEnd (districomp_srv_t* srv) {
-    // This makes the main thread wait on the death of the thread
+    // This makes the main thread wait on the death of the threads
     pthread_join(srv->listening_thrd, NULL);
     pthread_join(srv->receiving_thrd, NULL);
+    WSWaitForThreadsEnd (&srv->webSrv);
 }
 
 void InitClient (districomp_cli_t* cli, const char* addr, const uint16_t sock_port, const int domain, const int type, const int protocol, const uint16_t ws_port) {
