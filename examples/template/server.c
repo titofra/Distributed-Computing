@@ -1,4 +1,4 @@
-#include "../../lib/districomp.c"
+#include <districomp.c>
 
 #define PORT 8080
 #define WS_PORT 1818
