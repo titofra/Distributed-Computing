@@ -1,2 +1,3 @@
 /build
 /examples/template/webserver_root/tasks
+*.o
