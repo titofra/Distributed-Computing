@@ -6,6 +6,10 @@
 #ifndef MUTEX_H
 #define MUTEX_H
 
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include <pthread.h>
 
 typedef struct mutex {

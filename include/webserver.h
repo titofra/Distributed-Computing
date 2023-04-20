@@ -8,8 +8,10 @@
 
 #define MAX_LEN_INCOMING_DATA 1024
 #define MAX_LEN_FILES 1024
+#define N_CHR_TSK_MAX 4 +1   // number of characters for task's id (i.e. 3 means that tasks goes from 0 to 999). +1 for the end character ('0')
 
 #include <sys/socket.h>
+#include <arpa/inet.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <pthread.h>
@@ -17,6 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <errno.h>
 
 typedef struct webserver_srv {
