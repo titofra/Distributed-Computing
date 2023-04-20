@@ -6,7 +6,6 @@
 #ifndef DISTRICOMP_H
 #define DISTRICOMP_H
 
-#define CLIENT_RETURN_DATA_LEN 512
 #define N_CHR_TSK_MAX 4 +1   // number of characters for task's id (i.e. 3 means that tasks goes from 0 to 999). +1 for the end character ('0')
 
 #include <sys/socket.h>
@@ -27,7 +26,7 @@
 
 typedef struct _task {
     uint16_t id;
-    char result [CLIENT_RETURN_DATA_LEN];
+    char *result;
     const char* data_in;
     bool isDone;
 } _task_t;

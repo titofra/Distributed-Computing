@@ -144,6 +144,7 @@ void* _Receiving (void* arg) {
         ReleaseMutex (&srv->clients_mut, false);
 
         // For each client
+        char buf [128];
         uint16_t i = 0;
         while (i < nb_cli) {
 
@@ -155,15 +156,27 @@ void* _Receiving (void* arg) {
                 AcquireMutex (&srv->tasks_mut, true);
 
                 // We may receive a message
-                if (recv (
+                ssize_t nb = 0;
+                bool recv_something = false;
+                while ((nb = recv (
                         srv->clients [i].sck,
-                        srv->tasks [srv->clients [i].tsk_id].result,
-                        sizeof(srv->tasks [srv->clients [i].tsk_id].result),
+                        buf,
+                        sizeof(buf),
                         MSG_DONTWAIT    // Don't wait until a msg is receive
-                    ) >= 0
+                    )) >= 0
                 ){
-                    printf ("msg %s\n", srv->tasks [srv->clients [i].tsk_id].result);
+                    recv_something = true;
 
+                    size_t previous_len = strlen (srv->tasks [srv->clients [i].tsk_id].result);
+                    srv->tasks [srv->clients [i].tsk_id].result = (char *) realloc (
+                        srv->tasks [srv->clients [i].tsk_id].result, 
+                        sizeof (srv->tasks [srv->clients [i].tsk_id].result) + sizeof (char) * (unsigned long int) (nb + 1)
+                    );
+                    strcpy (srv->tasks [srv->clients [i].tsk_id].result + previous_len, buf);
+                    srv->tasks [srv->clients [i].tsk_id].result [previous_len + (size_t) nb + 1] = 0;   // make sure the string is closed
+                }
+
+                if (recv_something) {
                     ReleaseMutex (&srv->clients_mut, false);
 
                     srv->tasks [srv->clients [i].tsk_id].isDone = true;
@@ -190,7 +203,6 @@ void* _Receiving (void* arg) {
                         ReleaseMutex (&srv->clients_mut, false);
                     }
                 } else {
-
                     ReleaseMutex (&srv->clients_mut, false);
 
                     // It may be not a failed, just there is no msg
@@ -232,7 +244,8 @@ int AddTask (districomp_srv_t* srv, const char* data) {
     srv->tasks = (_task_t*) realloc (srv->tasks, (srv->nb_tsk + 1) * sizeof (_task_t));
     srv->tasks [srv->nb_tsk].id = srv->nb_tsk;
     srv->tasks [srv->nb_tsk].data_in = data;
-    srv->tasks [srv->nb_tsk].result [0] = 0;
+    srv->tasks [srv->nb_tsk].result = (char*) malloc (1);
+    srv->tasks [srv->nb_tsk].result [0] = 0;    // init result to a string of one character... the end character
     srv->tasks [srv->nb_tsk].isDone = false;
     srv->nb_tsk += 1;
 
