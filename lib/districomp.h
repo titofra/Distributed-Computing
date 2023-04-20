@@ -28,6 +28,7 @@
 typedef struct _task {
     uint16_t id;
     char result [CLIENT_RETURN_DATA_LEN];
+    const char* data_in;
     bool isDone;
 } _task_t;
 
