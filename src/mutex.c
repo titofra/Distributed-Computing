@@ -1,4 +1,4 @@
-#include "mutex.h"
+#include <mutex.h>
 
 void InitMutex (mutex_t* mut) {
     if (pthread_mutex_init(&mut->themutex, NULL) != 0) {

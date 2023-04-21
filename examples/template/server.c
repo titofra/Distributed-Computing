@@ -1,4 +1,4 @@
-#include "../../lib/districomp.c"
+#include <districomp.h>
 
 #define PORT 8080
 #define WS_PORT 1818
@@ -29,7 +29,6 @@ int main (void) {
     char* res_task0 = GetResult (&srv, tsk0_id);
     char* res_task1 = GetResult (&srv, tsk1_id);
     char* res_task2 = GetResult (&srv, tsk2_id);
-    //...
     printf ("1: %s\n2: %s\n3: %s\n", res_task0, res_task1, res_task2);
 
     // Close everything
