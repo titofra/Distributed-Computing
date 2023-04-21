@@ -14,6 +14,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct mailbox {
     mbkind* box;
     uint16_t N;
@@ -52,5 +56,9 @@ mbkind Receive (mailbox_t* mb);
     @return The number of elements
 */
 uint16_t GetNbMails (mailbox_t* mb);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif  // MAILBOX_H

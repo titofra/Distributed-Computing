@@ -20,9 +20,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-#include "../src/mailbox.c"
-#include "../src/mutex.c"
-#include "../src/webserver.c"
+#include "mailbox.h"
+#include "mutex.h"
+#include "webserver.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct _task {
     uint16_t id;
@@ -219,5 +223,9 @@ void SendResult (districomp_cli_t* cli, const char* data);
     @param districomp_cli_t* cli, Pointer to the districomp's client
 */
 void CloseClient (districomp_cli_t* cli);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif  // DISTRICOMP_H

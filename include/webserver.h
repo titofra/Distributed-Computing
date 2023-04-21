@@ -22,6 +22,10 @@
 #include <stdint.h>
 #include <errno.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct webserver_srv {
     int sck;
     int tmp_cli_sck;
@@ -77,5 +81,9 @@ void CloseWebServer (webserver_srv_t* srv);
     @param webserver_srv_t* srv, Pointer to the webserver
 */
 void WSWaitForThreadsEnd (webserver_srv_t* srv);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif  // WEBSERVER_H
