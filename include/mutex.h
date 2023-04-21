@@ -12,6 +12,10 @@
 #include <stdio.h>
 #include <pthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct mutex {
     pthread_mutex_t themutex;
     pthread_cond_t cond_getters;
@@ -46,5 +50,9 @@ void ReleaseMutex (mutex_t* mut, bool wSet);
     @param mutex_t* mut, Pointer to the mutex
 */
 void DestroyMutex(mutex_t* mut);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif  //MUTEX_H
