@@ -1,4 +1,4 @@
-#include "mailbox.h"
+#include <mailbox.h>
 
 void InitMailBox (mailbox_t* mb, uint16_t N_max, mbkind novalues, bool overwrite) {
     mb->N = 0;

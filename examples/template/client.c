@@ -1,4 +1,4 @@
-#include <districomp.c>
+#include <districomp.h>
 
 #define SRV_PORT 8080
 #define WS_PORT 1818
@@ -16,7 +16,7 @@ int main (void) {
         ReceiveTask (&cli, &data);
 
         // Process with data
-        const char* result = "oiuio xosq ixsq";
+        const char* result = "this is the result !";
 
         // Send the result
         SendResult (&cli, result);

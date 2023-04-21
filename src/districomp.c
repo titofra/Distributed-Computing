@@ -1,4 +1,4 @@
-#include "districomp.h"
+#include <districomp.h>
 
 void InitServer (districomp_srv_t* srv, const uint16_t port, const uint16_t ws_port, const int domain, const int type, const int protocol, const char* path_to_ws_root, const uint16_t maxSockReqQeued) {
     // Create socket
