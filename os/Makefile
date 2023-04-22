@@ -1,14 +1,14 @@
-.ONESHELL:	# to have all commands running in the same shell, so exit works properly
+#.ONESHELL:	# to have all commands running in the same shell, so exit works properly
 
 os-image:
 	# the path to bzImage may vary
 	@if [ ! -f ./linux*/arch/x86_64/boot/bzImage ]; then \
 		make kernel; \
 	fi
-	@if [ ! -f ./busybox*/initramfs.cpio.gz ]; then \
+	@if [ ! -f ./busybox/initramfs.cpio.gz ]; then \
 		make initrd; \
 	fi
-	@if [ ! -f ./busybox*/initramfs.cpio.gz ] || [ ! -f ./linux*/arch/x86_64/boot/bzImage ]; then \
+	@if [ ! -f ./busybox/initramfs.cpio.gz ] || [ ! -f ./linux*/arch/x86_64/boot/bzImage ]; then \
 		exit; \
 	fi
 	tput setaf 2
@@ -16,7 +16,7 @@ os-image:
 	tput sgr0
 	mkdir -p iso iso/boot iso/boot/grub
 	cp ./linux*/arch/x86_64/boot/bzImage ./iso/boot/bzImage
-	cp ./busybox*/initramfs.cpio.gz ./iso/boot/initramfs.cpio.gz
+	cp ./busybox/initramfs.cpio.gz ./iso/boot/initramfs.cpio.gz
 	@if [ -d "/sys/firmware/efi" ]; then \
 		# your system is using uefi; \
 		echo set default=0 > ./iso/boot/grub/grub.conf; \
@@ -87,33 +87,29 @@ initrd:
 		tput sgr0; \
 		exit; \
 	fi
-	@if [ -d ./busybox* ]; then \
-		cd ./busybox* ; \
-		make defconfig ; \
-		echo ; \
-		tput setaf 3; \
-		echo "WARNING: In the next TUI, go to Settings and checked 'Build static binary (no shared libs)', then edit as you want, save and quit."; \
-		read -p "Press any key to continue."; \
-		tput sgr0; \
-		make menuconfig ; \
-		make install ; \
-		cd _install ; \
-		mkdir dev proc sys; \
-		cp ../../networkSetup.sh ./networkSetup.sh; \
-		cp ../../../build/client.o ./client.o; \
-		echo "#!/bin/sh" > init; \
-		echo "mount -t devtmpfs none /dev" >> init; \
-		echo "mount -t proc none /proc" >> init; \
-		echo "mount -t sysfs none /sys" >> init; \
-		echo "exec networkSetup.sh" >> init; \
-		echo "exec client.o" >> init; \
-		find . -print0 | cpio --null -ov --format=newc | gzip -9 > ../initramfs.cpio.gz; \
-	else \
-		tput setaf 1; \
-		echo "ERROR: You must manually install busybox. For that, check out https://www.busybox.net/downloads/. Make sure to download it here."; \
-		tput sgr0; \
-		exit; \
+	@if [ ! -d ./busybox ]; then \
+		git submodule add https://git.busybox.net/busybox ./busybox; \
 	fi
+	cd ./busybox; \
+	make defconfig; \
+	tput setaf 3; \
+	echo "WARNING: In the next TUI, go to Settings and checked 'Build static binary (no shared libs)', then edit as you want, save and quit."; \
+	echo "WARNING: your display/console must be at least 19 lines by 80 columns."; \
+	read -p "Press any key to continue."; \
+	tput sgr0; \
+	make menuconfig; \
+	make install; \
+	cd _install; \
+	mkdir dev proc sys; \
+	cp ../../networkSetup.sh ./networkSetup.sh; \
+	cp ../../../build/client.o ./client.o; \
+	echo "#!/bin/sh" > init; \
+	echo "mount -t devtmpfs none /dev" >> init; \
+	echo "mount -t proc none /proc" >> init; \
+	echo "mount -t sysfs none /sys" >> init; \
+	echo "exec networkSetup.sh" >> init; \
+	echo "exec client.o" >> init; \
+	find . -print0 | cpio --null -ov --format=newc | gzip -9 > ../initramfs.cpio.gz; \
 	tput setaf 2
 	@echo "Initrd done !"
 	tput sgr0
@@ -122,4 +118,4 @@ clean:
 	tput setaf 3
 	@echo "Note: Only clean basic things, not all the files built during install. To do so, follow instructions on busybox and linux Makefile"
 	tput sgr0
-	rm -rf ./iso ./busybox*/initramfs.cpio.gz ./busybox*/_install ./linux*/arch/x86_64/boot/bzImage ../build/distrinet.iso
+	rm -rf ./iso ./busybox/initramfs.cpio.gz ./busybox/_install ./linux*/arch/x86_64/boot/bzImage ../build/distrinet.iso
