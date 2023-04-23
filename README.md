@@ -2,10 +2,12 @@
 
 [Distributed computing](https://en.wikipedia.org/wiki/Distributed_computing) refers to a network of computers working together to solve a problem or complete a task. Instead of a single computer handling all the processing, the workload is divided among multiple machines, allowing for faster and more efficient processing.
 
+<p align="center">
+	<img src="https://github.com/titofra/Distributed-Computing/raw/main/resources/distributed_computing.png" width="700">
+</p>
+
 <br/>
-
 ⚠️ This repository contains **submodules**, add `--recurse-submodules` when cloning ⚠️
-
 <br/>
 
 ## Scope
