@@ -1,3 +1,7 @@
 /build
 /examples/template/webserver_root/tasks
 /examples/template/build
+/os/linux*
+/os/iso
+/os/busybox
+/os/*.iso
