@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #This script aims to configure the network on the targeted machine.
 #It is executed at the end of the boot, just before the client program.
 
