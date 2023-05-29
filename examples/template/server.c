@@ -20,7 +20,7 @@ int main (void) {
     int tsk1_id = AddTask (&srv, "{id: 1, data: 61518}");
     int tsk2_id = AddTask (&srv, "Well, we can put anything as data\nEverything, almost...");
 
-    // Wait until there is a still a tasks
+    // Wait until there is no remaining task
     while (GetNbRemainingTasks (&srv) > 0) {
         // Some tasks either are still waiting to be executed or are executing... 
     }
