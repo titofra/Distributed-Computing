@@ -43,6 +43,7 @@ This is the sum up of those tutorials, explanations are available on both:
 			mount -t sysfs none /sys
 			echo "Welcome to my Linux!"
 			exec /bin/sh
+		Do not forget to give it execution permissions! Can be done with a basic chmod +x init
 12)	Create the initrd's file
 		$find . -print0 | cpio --null -ov --format=newc | gzip -9 > ../initramfs.cpio.gz
 
