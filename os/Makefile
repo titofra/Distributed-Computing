@@ -37,7 +37,7 @@ os-image:
 		echo "	set gfxpayload=keep" >> ./iso/boot/grub/grub.conf; \
 		echo "	terminal_output gfxterm" >> ./iso/boot/grub/grub.conf; \
 		echo fi >> ./iso/boot/grub/grub.conf; \
-		echo menuentry 'myos' --class os { >> ./iso/boot/grub/grub.conf; \
+		echo menuentry \'districompOS - https://github.com/titofra \' --class os { >> ./iso/boot/grub/grub.conf; \
 		echo "	insmod gzio" >> ./iso/boot/grub/grub.conf; \
 		echo "	insmod part_msdos" >> ./iso/boot/grub/grub.conf; \
 		echo "	linux /boot/bzImage" >> ./iso/boot/grub/grub.conf; \
@@ -47,7 +47,7 @@ os-image:
 		# your system is using bios; \
 		echo set default=0 > ./iso/boot/grub/grub.conf; \
 		echo set timeout=10 >> ./iso/boot/grub/grub.conf; \
-		echo menuentry 'myos' --class os { >> ./iso/boot/grub/grub.conf; \
+		echo menuentry \'districompOS - https://github.com/titofra \' --class os { >> ./iso/boot/grub/grub.conf; \
 		echo "	insmod gzio" >> ./iso/boot/grub/grub.conf; \
 		echo "	insmod part_msdos" >> ./iso/boot/grub/grub.conf; \
 		echo "	linux /boot/bzImage" >> ./iso/boot/grub/grub.conf; \
@@ -121,6 +121,7 @@ initrd:
 	echo "mount -t sysfs none /sys" >> init; \
 	echo "exec networkSetup.sh" >> init; \
 	echo "exec client.o" >> init; \
+	chmod +x init; \
 	find . -print0 | cpio --null -ov --format=newc | gzip -9 > ../initramfs.cpio.gz; \
 	tput setaf 2
 	@echo "Initrd done !"
