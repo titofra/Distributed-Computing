@@ -3,5 +3,4 @@
 /examples/template/build
 /os/linux*
 /os/iso
-/os/busybox
 /os/*.iso
