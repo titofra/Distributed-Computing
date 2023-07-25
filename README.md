@@ -7,7 +7,7 @@
 </p>
 
 <br/>
-⚠️ This repository contains **submodules**, add `--recurse-submodules` when cloning
+⚠️ This repository contains submodules, add --recurse-submodules when cloning
 <br/>
 
 ## Scope
