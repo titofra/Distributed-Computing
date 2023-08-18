@@ -1,6 +1,5 @@
-/build
-/examples/template/webserver_root/tasks
-/examples/template/build
+build
+/examples/template/server/webserver_root/tasks
 /os/linux*
 /os/iso
 /os/*.iso

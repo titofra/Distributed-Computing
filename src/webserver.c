@@ -54,28 +54,34 @@ void* _WSListening (void* arg) {
     socklen_t cli_size = sizeof(cli_addr);
     while (1) {
         // Accept an incoming connection
-        srv->tmp_cli_sck = accept(srv->sck, (struct sockaddr*)&cli_addr, &cli_size);
+        srv->tmp_cli_sck = accept (srv->sck, (struct sockaddr*)&cli_addr, &cli_size);
         if (srv->tmp_cli_sck > 0) {
             // Read incoming request
             char buffer[MAX_LEN_INCOMING_DATA] = {0};
-            read(srv->tmp_cli_sck, buffer, MAX_LEN_INCOMING_DATA);
+            if (read (srv->tmp_cli_sck, buffer, MAX_LEN_INCOMING_DATA) > 0) {;
 
-            // Extract requested file path
-            char* file_path = strtok (buffer, " ");
-            file_path = strtok (NULL, " "); // pass the GET
-            if (file_path != NULL) {
-                // Build the file path
-                char result [strlen (srv->path_to_ws_root) + N_CHR_TSK_MAX];
-                strcpy (result, srv->path_to_ws_root);
-                strcat (result, file_path);
+                // Extract requested file path
+                char* file_path = strtok (buffer, " ");
+                file_path = strtok (NULL, " "); // pass the GET
+                if (file_path != NULL) {
+                    // Build the file path
+                    char result [strlen (srv->path_to_ws_root) + N_CHR_TSK_MAX];
+                    strcpy (result, srv->path_to_ws_root);
+                    strcat (result, file_path);
 
-                // Serve requested file
-                _Send (srv->tmp_cli_sck, result);
+                    // Serve requested file
+                    _Send (srv->tmp_cli_sck, result);
+                }
+            } else {
+                printf ("\n[Webserver] Failed to receive packet from %s:%i\n",
+                    inet_ntoa (cli_addr.sin_addr),
+                    ntohs (cli_addr.sin_port)
+                );
             }
         } else {
             printf ("\n[Webserver] Can't accept the client at IP %s:%i\n",
-                inet_ntoa(cli_addr.sin_addr),
-                ntohs(cli_addr.sin_port)
+                inet_ntoa (cli_addr.sin_addr),
+                ntohs (cli_addr.sin_port)
             );
         }
 

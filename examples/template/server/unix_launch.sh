@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cmake -B ./build/ -S ./
+cmake -B ./build/
 cd ./build/
 make

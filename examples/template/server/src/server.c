@@ -25,7 +25,7 @@ int main (void) {
         // Some tasks either are still waiting to be executed or are executing... 
     }
 
-    // Process results
+    // Get results
     char* res_task0 = GetResult (&srv, tsk0_id);
     char* res_task1 = GetResult (&srv, tsk1_id);
     char* res_task2 = GetResult (&srv, tsk2_id);
